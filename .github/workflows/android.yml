@@ -1,0 +1,38 @@
+
+name: Build PLC Master APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract PLC project
+        run: |
+          unzip PLC_Master_Hindi_V3_Mobile_Cloud_Build.zip -d source
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
+        run: |
+          cd source
+          gradle :app:assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PLC-Master-Hindi-APK
+          path: source/app/build/outputs/apk/debug/app-debug.apk
